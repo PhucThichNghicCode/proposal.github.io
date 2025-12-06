@@ -9,117 +9,121 @@ pre: " <b> 2. </b> "
 # APEX-EV Electric Vehicle Service Platform 
 
 ### 1. Executive Summary
-ApexEV is a comprehensive management platform designed to digitize and optimize the maintenance process at electric vehicle service centers. The system centralizes the entire service lifecycle—from appointment scheduling, vehicle reception, and repairs to payment—eliminating manual operations and enhancing operational efficiency. By leveraging the power of AWS's Hybrid architecture, combining the flexibility of containers on Amazon ECS Fargate and serverless services, ApexEV provides real-time monitoring, high security, and increased customer satisfaction. The platform ensures secure, role-based access for five key user roles through Amazon Cognito.
+RenGen is a comprehensive management platform designed to digitize and optimize maintenance workflows at service centers. The system centrally manages the entire service lifecycle—from request intake and repair processing to customer care—helping to eliminate manual tasks and enhance efficiency. Leveraging the power of the AWS cloud, RenGen combines flexible container architecture on Amazon ECS Fargate with the intelligent processing capabilities of Generative AI through Amazon Bedrock. The solution integrates automated development processes (CI/CD) from GitLab, ensuring rapid deployment speeds, high security, and rigorous monitoring, delivering a superior experience for end-users.
 
 ### 2. Problem Statement
 ### What’s the Problem?
-The current operational process relies heavily on manual methods, leading to inefficient work performance, fragmented data, and a passive customer experience.
+Current operational processes rely heavily on manual methods, leading to inefficiencies, fragmented data, and a lack of intelligent support tools for automated customer interaction.
 
 ### The Solution
-The platform utilizes a multi-layered security architecture. The React.js frontend is deployed on AWS Amplify and distributed globally via Amazon CloudFront, protected by AWS WAF (Web Application Firewall).
+The platform employs a modern architecture, starting at the Edge layer with Amazon Route 53 for user routing. The interface (Frontend) is hosted on AWS Amplify Hosting, ensuring fast and stable access.
+Amazon API Gateway acts as the central hub, intelligently routing requests.
 
-The entire core business logic (Backend) is a Spring Boot application running on Amazon ECS Fargate, placed securely within a Private Subnet of a VPC (Virtual Private Cloud). Amazon API Gateway acts as the entry point, receiving requests from the frontend (which are authenticated by Amazon Cognito) and forwarding them to an Application Load Balancer (ALB) before reaching ECS.
-
-To achieve high performance, the system uses Amazon ElastiCache (Redis) for caching and Amazon RDS (SQL Server) as the primary relational database. Multimedia data (images/videos) is stored on Amazon S3.
-
-Asynchronous tasks (such as sending emails) are processed through Amazon SNS -> AWS Lambda -> Amazon SES. Outbound internet connections from the backend (e.g., calling payment APIs, calling the Gemini API) are securely handled through a NAT Gateway.
+To ensure security, critical components such as ECS Fargate and the Amazon RDS database are placed in a Private Subnet, completely isolated from the public internet. Image data is stored on Amazon S3 and accessed securely via S3 Endpoints. Additionally, the software development process is fully automated: source code from GitLab is packaged and pushed to Amazon ECR for deployment to ECS.
 
 ### Benefits and Return on Investment
-The architectural solution on AWS not only digitizes the entire workflow but also creates a significant competitive advantage in performance, security, and scalability. The platform ensures an instant and seamless user experience thanks to the global content delivery network of CloudFront and ElastiCache caching, while data is securely protected through multiple layers with AWS WAF and the VPC private network.
+Adopting this architecture delivers a significant competitive advantage by integrating Artificial Intelligence (GenAI) via Amazon Bedrock, which helps automate customer care and data analysis. The system ensures high availability and data security thanks to the VPC network separation design (Public/Private subnets).
 
-Operating on Amazon ECS Fargate automates processes and eliminates the burden of infrastructure management, allowing staff to focus fully on their expertise and customer service. With an estimated monthly operating cost of $50 - $85 USD, this investment is quickly offset by minimizing security risks, increasing labor productivity, and improving revenue through customer satisfaction. Consequently, the return on investment (ROI) is projected to be between 8-15 months, after which the platform will become a sustainable growth driver for the business.
+The CI/CD process integrated with GitLab and ECR helps minimize downtime when updating new features, while Amazon CloudWatch provides comprehensive monitoring to detect incidents instantly. The cost model is optimized thanks to the use of Fargate (Serverless container) and Lambda (Pay-per-use), ensuring businesses only pay for the actual resources used. This investment not only resolves current operational challenges but also creates a solid technological foundation for long-term growth, with the expected Return on Investment (ROI) period significantly shortened.
 
 ### 3. Solution Architecture
-The APEX-EV electric vehicle maintenance management platform implements a multi-layered, high-performance security architecture on AWS. The user interface is built with React.js, deployed via AWS Amplify, and distributed globally by Amazon CloudFront, while being protected by the AWS Web Application Firewall (WAF). The entire core business logic is a Spring Boot application running on Amazon ECS Fargate, placed securely within a Private Subnet. Amazon API Gateway acts as the communication gateway, authenticating requests via Amazon Cognito before forwarding them to an Application Load Balancer and then to the application. To optimize speed, the platform uses Amazon ElastiCache (Redis) for caching, Amazon RDS (SQL Server) for the primary database, and Amazon S3 for storing multimedia files. Asynchronous tasks, such as sending notifications, are processed efficiently through the Amazon SNS, Lambda, and SES service chain.
+The RenGen management platform applies a modern architecture on AWS, beginning with user access via Amazon Route 53 at the Edge layer. The User Interface (Frontend) is hosted and deployed through AWS Amplify Hosting, connecting directly to Amazon API Gateway, which serves as the central communication portal. Here, data flow is flexibly divided: intelligent tasks and notifications are handled by a Serverless architecture using AWS Lambda connected to Amazon Bedrock (for AI features) and AWS SES (for email services). Core business logic is routed through an Application Load Balancer (ALB) located in the Public Subnet, then forwarded to the application running on Amazon ECS Fargate, which is securely protected within a Private Subnet. The system stores relational data on Amazon RDS and manages image files via Amazon S3 (securely connected via S3 Endpoints). Furthermore, the development process is automated via CI/CD from GitLab pushing container images to Amazon ECR, along with Amazon CloudWatch ensuring comprehensive monitoring.The RenGen management platform applies a modern architecture on AWS, beginning with user access via Amazon Route 53 at the Edge layer. The User Interface (Frontend) is hosted and deployed through AWS Amplify Hosting, connecting directly to Amazon API Gateway, which serves as the central communication portal. Here, data flow is flexibly divided: intelligent tasks and notifications are handled by a Serverless architecture using AWS Lambda connected to Amazon Bedrock (for AI features) and AWS SES (for email services). Core business logic is routed through an Application Load Balancer (ALB) located in the Public Subnet, then forwarded to the application running on Amazon ECS Fargate, which is securely protected within a Private Subnet. The system stores relational data on Amazon RDS and manages image files via Amazon S3 (securely connected via S3 Endpoints). Furthermore, the development process is automated via CI/CD from GitLab pushing container images to Amazon ECR, along with Amazon CloudWatch ensuring comprehensive monitoring.
 
-![APEX-EV Platform Architecture](/images/2-Proposal/APEX-EV.jpeg)
+![APEX-EV Platform Architecture](/images/2-Proposal/RenGen.jpeg)
 
 ### AWS Services Used
-- *Amazon ECS Fargate*: Runs the backend application (Spring Boot) as a container without needing to manage servers.
-- *AWS Lambda*: Handles asynchronous tasks, for example, processing notifications from SNS to send emails.
-- *Amazon API Gateway*: Communicates with the web application.
-- *Amazon S3*: Stores raw data (data lake) and processed data (2 buckets).
-- *Amazon RDS*: Provides a relational database (SQL Server) to store structured data (profiles, appointments, spare parts).
-- *AWS Amplify*: Hosts the Next.js web interface.
-- *Amazon Cognito*: Manages user access and permissions.
-- *Amazon ElastiCache*: Provides an in-memory cache (Redis) to speed up data retrieval and improve performance.
-- *NAT Gateway*: Allows resources in a private subnet to connect to the internet securely.
-- *AWS WAF*: Web application firewall, protects the platform from common web attacks.
-- *AWS SNS*: Notification service, used to initiate asynchronous processes (e.g., sending a notification to trigger Lambda).
-- *Route 53*: DNS service, responsible for routing your domain name to the application.
-- *AWS SES*: Email sending service, handles sending notifications and quotes to customers.
-- *AWS ECR*: Stores the application's container images (Docker) for deployment on ECS Fargate.
-- *AWS CloudFront*: Content Delivery Network (CDN) that helps accelerate the loading and distribution of the web interface (frontend) to users globally with low latency.
+- *Route 53*: DNS service, responsible for routing the domain (Edge layer) to the application. 
+- *AWS Amplify Hosting*: Hosts the web interface (frontend) and can integrate with CDN/WAF. In the diagram, it receives traffic from Route 53.
+- *Amazon API Gateway*: The main entry point (Gateway), receiving and routing all requests from the frontend/Amplify to processing services.  
+- *AWS Lambda (Bedrock)*: Handles AI/Generative AI tasks (prediction/content generation) by communicating with Amazon Bedrock.
+- *AWS Lambda (SES)*: Handles asynchronous tasks, such as processing notifications to send emails via AWS SES.
+- *Amazon Bedrock*: General AI service (Gen AI), providing foundation models to execute intelligent business operations.
+- *AWS SES*: Email sending service, performs the sending of notifications, quotes, or processing results from Lambda.
+- *VPC*: Virtual network environment containing and protecting AWS resources (like ALB, ECS Fargate, RDS).
+- *ALB (Application Load Balancer)*: Load balancer, distributing traffic from API Gateway to application containers running on ECS Fargate.
+- *Amazon ECS Fargate*: Runs the backend application as containers without server management, handling core business logic.
+- *Amazon RDS*: Provides a relational database, placed in a Private Subnet to store structured data.
+- *Amazon S3*: Stores multimedia files like photos or other large data.
+- *ECR*: Repository for application container images (Docker), used by ECS Fargate for deployment.
+- *AWS CloudWatch*: Monitoring service, collecting logs and metrics from the entire system to track performance and detect issues.
 
 ### Component Design
-- *Request Reception*: Amazon API Gateway acts as the entry point, receiving and routing all requests from the web interface after they have been authenticated.
-- *Data Storage*: Relational data (Profiles, Appointments, Spare Parts) is stored on Amazon RDS; multimedia files (maintenance photos/videos) are stored on Amazon S3.
-- *Business Processing*: All core logic is handled by the Spring Boot application running on Amazon ECS Fargate; asynchronous tasks like sending emails are processed by AWS Lambda.
-- *Web Interface*: AWS Amplify deploys and hosts the React.js application. Amazon CloudFront distributes the content globally to increase speed and is protected by AWS WAF.
-- *User Management*: Amazon Cognito manages the entire process of authentication, detailed authorization, and account security for all users.
+- *Request Handling*: Route 53 routes the domain name to AWS Amplify Hosting, where the web interface is hosted. Requests from the web interface are then forwarded to Amazon API Gateway, the entry point acting to receive and route all traffic.  
+- *Business Logic Processing*:
+    + *Core Logic*: All core business logic is handled by applications running on Amazon ECS Fargate, placed within a private network (Private Subnet) to ensure security.
+    + *AI/Asynchronous Tasks*: Generative or AI tasks are processed by AWS Lambda (Bedrock) via Amazon Bedrock. Auxiliary tasks like email sending are handled by AWS Lambda (SES) and executed by AWS SES.
+- *Network Infrastructure*:
+    + *Public Subnet*: Contains services needing Internet exposure, such as the ALB.
+    + *Private Subnet*: Contains sensitive resources like ECS Fargate and Amazon RDS, protecting them from direct external access.
+- *Data Storage*: Sensitive and structured data is stored on Amazon RDS. Multimedia files or other large data sets are stored on Amazon S3
+- *Deployment and Monitoring*: The container deployment process is managed via GitLab and AWS ECR (container image repository). CloudWatch performs overall monitoring of performance, logs, and metrics for all services from ECS, Lambda, to RDS.
 
 ### 4. Technical Implementation
 **Implementation Phases**
-This project has two parts—setting up weather edge stations and building the weather platform—each following 4 phases:
-1. *Research and Architecting*: Research suitable technologies (React.js, Spring Boot) and design a detailed multi-layer system architecture on AWS (1 month before starting).
-2. *Cost Calculation and Feasibility Check*: Use the AWS Pricing Calculator to estimate operating costs for core services like ECS, RDS, and WAF, and determine a feasible plan.
-3. *Architectural Adjustments for Cost/Solution Optimization*: Refine the architecture, selecting appropriate configurations for ECS Fargate, RDS, and ElastiCache to balance performance and cost.
-4. *Development, Testing, Deployment*: Code the React.js (Frontend) and Spring Boot (Backend) applications, deploy the infrastructure using AWS CDK, then conduct comprehensive testing and go live.
-
-**Technical Requirements**
-- *User Interface (Frontend)*: Practical knowledge of React.js to build a modern user interface. Use AWS Amplify to automate the deployment process, Amazon CloudFront for low-latency global content delivery, and AWS WAF to protect the application from web attacks.
-- *Core System (Backend & Infrastructure)*: In-depth knowledge of Java/Spring Boot to develop business logic. The application is containerized using Docker, stored on Amazon ECR, and runs on Amazon ECS Fargate. Requires understanding of Amazon RDS (SQL Server) for the primary database and ElastiCache (Redis) for caching. Proficient use of AWS CDK to define and deploy the entire infrastructure automatically, including VPC, API Gateway, Application Load Balancer, and security rules. Manage authentication and detailed user authorization through Amazon Cognito.
+The development project for the RenGen Smart Electric Vehicle Maintenance Platform — including the integration of an AI virtual assistant and a service management system — undergoes 4 phases:
+1. *Research and Architectural Design*: Research suitable technologies (React.js, Spring Boot, AWS Bedrock) and design a system architecture combining Containers (ECS) and Serverless (Lambda) on AWS (1 month prior to commencement).
+2. *Cost Estimation and Feasibility Check*: Use the AWS Pricing Calculator to estimate operating costs for core services such as ECS Fargate, RDS, and token costs for Amazon Bedrock, and propose the most feasible solution.
+3. *Architecture Adjustment for Cost/Solution Optimization*: Refine the architecture, select appropriate configurations for ECS Fargate and RDS, and optimize Lambda runtime (timeouts) to balance AI processing performance and cost.
+4. *Development, Testing, and Deployment*: Program the React.js application (Frontend) and Spring Boot (Backend), integrate the Bedrock Agent, deploy CI/CD pipelines via GitLab, package Docker images to ECR, and launch operations on ECS. Technical Requirements
+*Technical Requirements*  
+- *User Interface (Frontend)*: Practical knowledge of React.js to build scheduling interfaces and chat with the AI virtual assistant. Use AWS Amplify to automate the deployment process (Hosting), connect with Amazon API Gateway to send secure processing requests, ensuring a smooth user experience on all devices.
+- *Core System (Backend & Infrastructure)*: In-depth knowledge of Java/Spring Boot to develop maintenance business logic. The application is packaged using Docker, with images stored on AWS ECR and running on Amazon ECS Fargate. Requires understanding of Amazon RDS for relational databases (storing vehicle profiles, maintenance history). Specifically, requires AWS Lambda (Python) programming skills to connect with Amazon Bedrock (AI/Chatbot processing) and AWS SES (sending asynchronous email notifications). Manage detailed user authentication and authorization (customers/technicians) via Amazon Cognito.
 
 ### 5. Timeline & Milestones
 **Project Timeline**
-1. *Phase 1 (Weeks 1-2)*: Design and Foundation:
-- Analyze & design the detailed AWS architecture. Design the database schema and API endpoints.
-- Configure the AWS environment (VPC, Subnets, IAM, Cognito).
-- Set up a basic CI/CD pipeline (GitLab -> Amplify, GitLab -> ECR).
-2. *Phase 2 (Weeks 3-4)*: Core Service Flow Development:
-- Develop the Customer flow (Booking appointments, Personal profile).
-- Develop the Service Advisor flow (Managing appointments, Creating quotes).
-- Develop the Technician flow (Maintenance checklist, Updating progress).
-3. *Phase 3 (Weeks 5-6)*: Admin & Advanced Features Development:
-- Build the Management Module (Viewing reports, Inventory management, HR).
-- Build the Admin Module (Permissions, Service management).
-- Integrate the AI Chatbot (calling the Gemini API via NAT Gateway) and the notification flow (SNS/SES).
-4. *Phase 4 (Weeks 7-8)*: Testing, Optimization, and Go-Live:
-- Conduct internal User Acceptance Testing (UAT) to find bugs and gather feedback.
-- Focus on bug fixing and making refinements based on feedback.
-- Optimize security (WAF Rules, IAM policies) and configure monitoring (CloudWatch Dashboards/Alarms).
-- Official deployment (Go-live).
-
+1. *Phase 1 (Week 1-2): Design and Foundation:*:
+- Analyze & Design detailed AWS architecture (VPC, Subnets, Security Groups). Design Database (RDS Schema) and define APIs (Swagger/OpenAPI).
+- Configure infrastructure environment: Setup VPC (Public/Private Subnets), IAM Roles, and Amazon Cognito (User Pools).
+- Setup CI/CD: Configure Pipeline on GitLab to automatically build Docker Images, push to Amazon ECR, and deploy Frontend to AWS Amplify.
+2. *Phase 2 (Week 3-4): Core Service Flow Development:*: 
+- Develop Customer flow (Frontend/Backend): Registration/Login, Vehicle Profile Management, Appointment Scheduling (stored in RDS).
+- Develop Service Advisor flow: Vehicle Reception, Create Quotations and Repair Orders.
+- Phát triển luồng Kỹ thuật viên: Xem danh sách việc cần làm (Task list), Cập nhật tiến độ bảo dưỡng và tải ảnh/video lên Amazon S3.
+3. *Phase 3 (Week 5-6): Administration & Advanced Feature Development:*: 
+- Build Administration Module: Report Dashboard, Spare Parts Management (Inventory), and Personnel Management.Build Administration Module: Report Dashboard, Spare Parts Management (Inventory), and Personnel Management.
+- Write AWS Lambda to connect Amazon Bedrock Agent (AI Chatbot for customer support) and expose via API Gateway.
+- Write AWS Lambda to trigger AWS SES for sending automatic notification emails/quotations to customers.
+- Configure NAT Gateway so resources in Private Subnet (Lambda, ECS) can securely connect to the Internet/AWS Services.
+4. *Phase 4 (Week 7-8): Testing, Optimization, and Operation:*:  
+- Internal User Acceptance Testing (UAT) to ensure the flow from Web -> API Gateway -> Lambda/ECS -> DB operates smoothly.
+- Optimize security: Configure AWS WAF (block SQL Injection, XSS) and review IAM access rights.
+- Operational monitoring: Setup Dashboard on Amazon CloudWatch to track logs and metrics of ECS Fargate and Lambda.
+- Official deployment.
 ### 6. Budget Estimation
 **Infrastructure Costs**
-- AWS Lambda: $0.00 USD/month (1,000 requests, 512 MB storage).
-- S3 Standard: $0.15 USD/month (6 GB, 2,100 requests, 1 GB scan).
-- Amazon RDS: $0.00 USD/month (Free for 750 hours/month for 12 months).
-- AWS Amplify: $0.35 USD/month (256 MB, 500 ms requests).
-- Amazon API Gateway: $0.01 USD/month (2,000 requests).
-- Amazon ElastiCache: $0.00 USD/month (Free for 750 hours/month for 12 months).
-- Amazon ECS Fargate: ~$10.00 USD/month for 1 task (0.5 vCPU, 1GB RAM).
-- Application Load Balancer: ~$16.20 USD/month.
-- NAT Gateway: ~$32.45 USD/month (Internet egress for ECS/AI).
-- AWS WAF: ~$6.00 USD/month (Firewall).
-- Serverless Services: ~$5.00 USD/month, almost entirely free within the Free Tier (except for Route 53 and S3 if exceeding 5GB).
-*Total*: $~69.95 USD/month.
+
+- Amazon ECS Fargate: ~11.00 USD/month.
+- Application Load Balancer (ALB): ~16.43 USD/month.
+- Amazon Bedrock (AI): ~5.00 USD/month (Calculated by Token count).
+- AWS Lambda: 0.00 USD/month (Free Tier).
+- Amazon RDS & ElastiCache: 0.00 USD/month (Free Tier).
+- S3 Standard: ~0.15 USD/month.
+- AWS Amplify & API Gateway: ~0.50 USD/month.
+- Amazon CloudWatch: 0.00 USD/month (Free Tier).
+- Amazon SES: 0.00 USD/month (Free Tier).
+
+*Total:* ~32.63/month.
 
 ### 7. Risk Assessment
 #### Risk Matrix
 - System downtime: High impact, low probability.
-- Security breach/data loss: High impact, medium probability.
-- Exceeding operational costs: Medium impact, medium probability.
+- Security breach/Data loss: Very high impact, low probability.
+- Operational cost overrun: Medium impact, medium probability.
 #### Mitigation Strategies
-- System: Deploy infrastructure across multiple Availability Zones (Multi-AZ) for RDS and ECS Fargate. Use an Application Load Balancer to automatically distribute traffic and handle failover.
-- Security: Use AWS WAF to filter malicious requests. Enforce strict permissions with Amazon Cognito and apply the principle of least privilege. The backend is placed within a private network (Private Subnet).
-- Cost: Use AWS Budgets to set up alerts when costs exceed thresholds. Regularly monitor and optimize resources (right-sizing) to avoid waste.
+- System: Deploy infrastructure across Multi-AZ for RDS and ECS Fargate. Use Application Load Balancer for automatic load distribution and recovery.
+- Security: Use AWS WAF to filter malicious requests. Strict authorization with Amazon Cognito and apply least privilege principle. Backend placed in a separate network (Private Subnet).
+- Cost: Use AWS Budgets to set alerts when costs exceed thresholds. Regularly monitor and optimize resources (right-sizing) to avoid waste.
+- Incorrect AI response: Medium impact, medium probability.
 #### Contingency Plans
-- Activate the incident response procedure, using RDS backups to restore data.
-- Deploy a static maintenance notice page on S3/CloudFront to inform users in the event of a prolonged system outage.
+- System: Deploy ECS Fargate and RDS infrastructure across Multi-AZ to ensure high availability. Use Application Load Balancer for automatic load coordination and Auto-scaling to expand Tasks when traffic spikes.
+- AI Quality: Limit Bedrock Agent response scope via strict Prompt Engineering (System Prompts) and only allow information retrieval from moderated Knowledge Bases.
+- Enable Automated Backups for RDS and Point-in-time Recovery to restore data to any point in time.
 
 ### 8. Expected Outcomes
 #### Technical Improvements: 
-A centralized, API-first system that completely replaces disjointed manual processes. The architecture is secure and scalable (thanks to ECS and RDS). Data is centrally managed, secure, and ready for analysis.
+Technical Improvements: Successfully build a modern Hybrid Architecture combining Microservices (ECS Fargate) and Serverless (Lambda, Bedrock), ensuring flexible scalability without managing physical servers.
+
 #### Long-term Value
-Builds a valuable data asset, forming the basis for future business analysis and strategic decisions. Creates a solid technological foundation for easily expanding new features (e.g., AI-powered predictive failure analysis). Increases employee work efficiency and boosts customer retention rates through a transparent and superior service experience.
+Enhance customer experience: AI virtual assistant operating 24/7 helps reduce waiting time, increasing appointment conversion rates and car owner satisfaction.
+
+Data assets: Maintenance history and interaction behavior data are centrally stored on RDS/S3, creating a premise for deploying AI Predictive Maintenance models for electric vehicle batteries and motors in the future.
